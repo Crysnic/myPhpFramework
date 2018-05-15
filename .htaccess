@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteCond %{DOCUMENT_ROOT}%{SCRIPT_FILENAME} !-f
+RewriteCond %{DOCUMENT_ROOT}%{SCRIPT_FILENAME} !-d
+RewriteRule . /front.php [L]

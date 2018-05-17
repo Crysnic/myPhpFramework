@@ -9,8 +9,8 @@ $request = Request::createFromGlobals();
 $response = new Response();
 
 $map = [
-    '/hello' => __DIR__.'/hello.php',
-    '/bye' => __DIR__.'/bye.php'
+    '/hello' => __DIR__ . '/template/hello.php',
+    '/bye' => __DIR__ . '/template/bye.php'
 ];
 
 $path = $request->getPathInfo();

@@ -1,0 +1,1 @@
+Hello <?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>, from ip <?php echo $request->getClientIp(); ?>

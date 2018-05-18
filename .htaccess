@@ -1,4 +1,7 @@
-RewriteEngine on
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /myPhpFramework/index.php/$1 [NC,L]
+RewriteEngine On
+RewriteBase /myPhpFramework/
+
+RewriteCond %{THE_REQUEST} /web/([^\s?]*) [NC]
+RewriteRule ^ %1 [L,NE,R=302]
+
+RewriteRule ^((?!web/).*)$ web/index.php/$1 [L,NC]

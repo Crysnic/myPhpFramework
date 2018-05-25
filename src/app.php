@@ -2,7 +2,6 @@
 
 use Symfony\Component\Routing;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 function render_template($request): Response
 {
@@ -11,26 +10,6 @@ function render_template($request): Response
     include sprintf(__DIR__.'/../src/pages/%s.php', $_route);
 
     return new Response(ob_get_clean());
-}
-
-function is_leap_year($year = null) {
-    if (null === $year) {
-        $year = date('Y');
-    }
-
-    return 0 === $year % 400 || (0 === $year % 4 && 0 !== $year % 100);
-}
-
-class LeapYearController
-{
-    public function index($year)
-    {
-        if (is_leap_year($year)) {
-            return new Response('Yep, this is a leap year!');
-        }
-
-        return new Response('Nope, this is not a leap year.');
-    }
 }
 
 
@@ -46,7 +25,7 @@ $routes->add('bye', new Routing\Route('/myPhpFramework/bye', ['_controller' => '
 
 $routes->add('leap_year', new Routing\Route('/myPhpFramework/is_leap_year/{year}', [
     'year' => null,
-    '_controller' => 'LeapYearController::index'
+    '_controller' => 'Calendar\Controller\LeapYearController::index'
 ]));
 
 return $routes;

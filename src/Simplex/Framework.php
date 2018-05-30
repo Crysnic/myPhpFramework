@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simplex;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
@@ -17,6 +18,11 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
  */
 class Framework
 {
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
     /**
      * @var UrlMatcherInterface
      */
@@ -34,16 +40,19 @@ class Framework
 
     /**
      * Framework constructor.
+     * @param EventDispatcher $eventDispatcher
      * @param UrlMatcherInterface $matcher
      * @param ControllerResolverInterface $controllerResolver
      * @param ArgumentResolverInterface $argumentResolver
      */
     public function __construct(
+        EventDispatcher $eventDispatcher,
         UrlMatcherInterface $matcher,
         ControllerResolverInterface $controllerResolver,
         ArgumentResolverInterface $argumentResolver
     )
     {
+        $this->eventDispatcher = $eventDispatcher;
         $this->matcher = $matcher;
         $this->controllerResolver = $controllerResolver;
         $this->argumentResolver = $argumentResolver;
@@ -69,6 +78,8 @@ class Framework
         } catch (\Exception $e) {
             $response = new Response('An error occurred: '.$e->getMessage(), 500);
         }
+
+        $this->eventDispatcher->dispatch('response', new ResponseEvent($response, $request));
 
         return $response;
     }

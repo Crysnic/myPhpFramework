@@ -1,9 +1,10 @@
 <?php
 
 use Symfony\Component\Routing;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-function render_template($request): Response
+function render_template(Request $request): Response
 {
     extract($request->attributes->all(), EXTR_SKIP);
     ob_start();
@@ -14,9 +15,10 @@ function render_template($request): Response
 
 
 $routes = new Routing\RouteCollection();
+
 $routes->add('hello', new Routing\Route('/myPhpFramework/hello/{name}', [
     'name' => 'World',
-    '_controller' => function($request) {
+    '_controller' => function(Request $request) {
         return render_template($request);
     }
 ]));

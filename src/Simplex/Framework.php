@@ -6,10 +6,10 @@ namespace Simplex;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 /**
  * Class Framework
@@ -18,30 +18,30 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 class Framework
 {
     /**
-     * @var UrlMatcher
+     * @var UrlMatcherInterface
      */
     protected $matcher;
 
     /**
-     * @var ControllerResolver
+     * @var ControllerResolverInterface
      */
     protected $controllerResolver;
 
     /**
-     * @var ArgumentResolver
+     * @var ArgumentResolverInterface
      */
     protected $argumentResolver;
 
     /**
      * Framework constructor.
-     * @param UrlMatcher $matcher
-     * @param ControllerResolver $controllerResolver
-     * @param ArgumentResolver $argumentResolver
+     * @param UrlMatcherInterface $matcher
+     * @param ControllerResolverInterface $controllerResolver
+     * @param ArgumentResolverInterface $argumentResolver
      */
     public function __construct(
-        UrlMatcher $matcher,
-        ControllerResolver $controllerResolver,
-        ArgumentResolver $argumentResolver
+        UrlMatcherInterface $matcher,
+        ControllerResolverInterface $controllerResolver,
+        ArgumentResolverInterface $argumentResolver
     )
     {
         $this->matcher = $matcher;
@@ -67,9 +67,9 @@ class Framework
         } catch (ResourceNotFoundException $e) {
             $response = new Response('Not found!', 404);
         } catch (\Exception $e) {
-            $response = new Response('An error occurred!', 500);
+            $response = new Response('An error occurred: '.$e->getMessage(), 500);
         }
 
-        $response->send();
+        return $response;
     }
 }

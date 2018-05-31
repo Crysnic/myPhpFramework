@@ -24,7 +24,9 @@ $framework = new \Simplex\Framework(
 //add caching
 $framework = new HttpKernel\HttpCache\HttpCache(
     $framework,
-    new HttpKernel\HttpCache\Store(__DIR__.'/../cache')
+    new HttpKernel\HttpCache\Store(__DIR__.'/../cache'),
+    new HttpKernel\HttpCache\Esi(),
+    ['debug' => true]
 );
 
 $response = $framework->handle($request)->send();

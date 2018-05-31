@@ -20,9 +20,14 @@ $framework = new \Simplex\Framework(
     new HttpKernel\Controller\ControllerResolver(),
     new HttpKernel\Controller\ArgumentResolver()
 );
-$response = $framework->handle($request);
 
-$response->send();
+//add caching
+$framework = new HttpKernel\HttpCache\HttpCache(
+    $framework,
+    new HttpKernel\HttpCache\Store(__DIR__.'/../cache')
+);
+
+$response = $framework->handle($request)->send();
 
 
 

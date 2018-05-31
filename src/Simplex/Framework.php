@@ -7,6 +7,7 @@ namespace Simplex;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
  * Class Framework
  * @package Simplex
  */
-class Framework
+class Framework implements HttpKernelInterface
 {
     /**
      * @var EventDispatcher
@@ -60,9 +61,11 @@ class Framework
 
     /**
      * @param Request $request
+     * @param int $type
+     * @param bool $catch
      * @return Response
      */
-    public function handle(Request $request): Response
+    public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = true): Response
     {
         $this->matcher->getContext()->fromRequest($request);
 

@@ -6,6 +6,7 @@ namespace Simplex\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Simplex\Framework;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
@@ -57,10 +58,11 @@ class FrameworkTest extends TestCase
             ->method('getContext')
             ->will($this->returnValue($this->createMock(RequestContext::class)))
         ;
+        $eventDispatcher = new EventDispatcher();
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
 
-        $framework = new Framework($matcher, $controllerResolver, $argumentResolver);
+        $framework = new Framework($eventDispatcher, $matcher, $controllerResolver, $argumentResolver);
 
         $response = $framework->handle(new Request());
 
@@ -83,9 +85,10 @@ class FrameworkTest extends TestCase
             ->method('getContext')
             ->will($this->returnValue($this->createMock(RequestContext::class)))
         ;
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $controllerResolver = $this->createMock(ControllerResolverInterface::class);
         $argumentResolver = $this->createMock(ArgumentResolverInterface::class);
 
-        return new Framework($matcher, $controllerResolver, $argumentResolver);
+        return new Framework($eventDispatcher, $matcher, $controllerResolver, $argumentResolver);
     }
 }

@@ -6,18 +6,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing;
 use Symfony\Component\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Simplex\ContentLengthSubscriber;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 $request = Request::createFromGlobals();
+$requestStack = new RequestStack();
 $routes = include __DIR__."/../src/app.php";
 
 $context = new Routing\RequestContext();
 $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 
 $framework = new \Simplex\Framework(
-    loadEventDispatcher(),
-    $matcher,
+    loadEventDispatcher($matcher, $requestStack),
     new HttpKernel\Controller\ControllerResolver(),
+    $requestStack,
     new HttpKernel\Controller\ArgumentResolver()
 );
 
@@ -34,9 +35,17 @@ $response = $framework->handle($request)->send();
 
 
 
-function loadEventDispatcher(): EventDispatcher
+function loadEventDispatcher(Routing\Matcher\UrlMatcherInterface $matcher, RequestStack $requestStack): EventDispatcher
 {
+    $exceptionListener = new HttpKernel\EventListener\ExceptionListener(
+        'Calendar\Controller\ErrorController::exceptionAction'
+    );
+
     $dispatcher = new EventDispatcher();
-    $dispatcher->addSubscriber(new ContentLengthSubscriber());
+    $dispatcher->addSubscriber(new HttpKernel\EventListener\RouterListener($matcher, $requestStack));
+    $dispatcher->addSubscriber($exceptionListener);
+    $dispatcher->addSubscriber(new HttpKernel\EventListener\ResponseListener('UTF-8'));
+    $dispatcher->addSubscriber(new HttpKernel\EventListener\StreamedResponseListener());
+    $dispatcher->addSubscriber(new \Simplex\StringResponseSubscriber());
     return $dispatcher;
 }
